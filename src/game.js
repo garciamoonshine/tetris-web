@@ -13,6 +13,9 @@ class Game {
     this.lastTime = 0;
     this.dropCounter = 0;
     this.animId = null;
+    this.lockDelay = 500;
+    this.lockTimer = 0;
+    this.isLocking = false;
   }
 
   start() {
@@ -21,6 +24,7 @@ class Game {
     this.level = 1;
     this.lines = 0;
     this.gameOver = false;
+    this.isLocking = false;
     this.current = Tetromino.random();
     this.next = Tetromino.random();
     this.updateUI();
@@ -61,6 +65,7 @@ class Game {
     }
     if (this.board.isValidPosition(this.current, 0, 1)) {
       this.current.y++;
+      this.isLocking = false;
     } else {
       this.lock();
     }
@@ -77,6 +82,7 @@ class Game {
     }
     this.current = this.next;
     this.next = Tetromino.random();
+    this.isLocking = false;
     if (!this.board.isValidPosition(this.current)) {
       this.running = false;
       this.gameOver = true;
@@ -86,28 +92,33 @@ class Game {
   }
 
   moveLeft() {
-    if (this.board.isValidPosition(this.current, -1, 0)) this.current.x--;
+    if (this.board.isValidPosition(this.current, -1, 0)) {
+      this.current.x--;
+      this.isLocking = false;
+    }
   }
 
   moveRight() {
-    if (this.board.isValidPosition(this.current, 1, 0)) this.current.x++;
+    if (this.board.isValidPosition(this.current, 1, 0)) {
+      this.current.x++;
+      this.isLocking = false;
+    }
   }
 
   rotate() {
     const rotated = this.current.rotate();
     const prev = this.current.shape;
     this.current.shape = rotated;
-    if (!this.board.isValidPosition(this.current)) {
-      // wall kick attempts
-      this.current.x++;
-      if (!this.board.isValidPosition(this.current)) {
-        this.current.x -= 2;
-        if (!this.board.isValidPosition(this.current)) {
-          this.current.x++;
-          this.current.shape = prev;
-        }
-      }
+    // Wall kick: try offsets [0, +1, -1, +2, -2]
+    const kicks = [0, 1, -1, 2, -2];
+    let valid = false;
+    for (const kick of kicks) {
+      this.current.x += kick;
+      if (this.board.isValidPosition(this.current)) { valid = true; break; }
+      this.current.x -= kick;
     }
+    if (!valid) this.current.shape = prev;
+    else this.isLocking = false;
   }
 
   render() {
