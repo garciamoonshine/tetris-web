@@ -1,10 +1,12 @@
 class Board {
   constructor() {
     this.grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+    this.clearedRows = [];
   }
 
   reset() {
     this.grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+    this.clearedRows = [];
   }
 
   isValidPosition(piece, offsetX = 0, offsetY = 0) {
@@ -33,8 +35,10 @@ class Board {
 
   clearLines() {
     let cleared = 0;
+    this.clearedRows = [];
     for (let r = ROWS - 1; r >= 0; r--) {
       if (this.grid[r].every(cell => cell !== 0)) {
+        this.clearedRows.push(r);
         this.grid.splice(r, 1);
         this.grid.unshift(Array(COLS).fill(0));
         cleared++;
