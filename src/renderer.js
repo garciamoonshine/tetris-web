@@ -8,24 +8,19 @@ class Renderer {
   drawBlock(ctx, x, y, color, size = BLOCK_SIZE) {
     ctx.fillStyle = color;
     ctx.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-    // highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.15)';
-    ctx.fillRect(x * size + 1, y * size + 1, size - 2, 4);
-    // shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    ctx.fillRect(x * size + 1, y * size + size - 5, size - 2, 4);
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    ctx.fillRect(x * size + 1, y * size + 1, size - 2, 5);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(x * size + 1, y * size + size - 6, size - 2, 5);
   }
 
   drawBoard(grid) {
     this.ctx.clearRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
-    // draw grid lines
-    this.ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    this.ctx.strokeStyle = 'rgba(255,255,255,0.04)';
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
         this.ctx.strokeRect(c * BLOCK_SIZE, r * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        if (grid[r][c]) {
-          this.drawBlock(this.ctx, c, r, COLORS[grid[r][c]]);
-        }
+        if (grid[r][c]) this.drawBlock(this.ctx, c, r, COLORS[grid[r][c]]);
       }
     }
   }
@@ -45,12 +40,14 @@ class Renderer {
       row.forEach((cell, c) => {
         if (cell) {
           this.ctx.strokeStyle = piece.color;
+          this.ctx.globalAlpha = 0.35;
           this.ctx.lineWidth = 1;
           this.ctx.strokeRect(
             (ghost.x + c) * BLOCK_SIZE + 1,
             (ghost.y + r) * BLOCK_SIZE + 1,
             BLOCK_SIZE - 2, BLOCK_SIZE - 2
           );
+          this.ctx.globalAlpha = 1;
         }
       });
     });
@@ -72,7 +69,7 @@ class Renderer {
   }
 
   drawGameOver(ctx) {
-    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillStyle = 'rgba(0,0,0,0.72)';
     ctx.fillRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
     ctx.fillStyle = '#e94560';
     ctx.font = 'bold 24px Courier New';
