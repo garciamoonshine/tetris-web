@@ -3,38 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tetris Web</title>
+  <title>🧱 Tetris</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body { background:#0d0d1a; color:#fff; font-family:'Segoe UI',sans-serif; margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; }
+    #game-layout { display:flex; gap:16px; align-items:flex-start; }
+    .side-panel { display:flex; flex-direction:column; gap:12px; min-width:90px; }
+    .panel-box { background:rgba(255,255,255,0.07); border-radius:8px; padding:8px; text-align:center; }
+    .panel-box h4 { margin:0 0 6px; font-size:11px; color:#aaa; text-transform:uppercase; letter-spacing:1px; }
+    canvas#gameCanvas { border:2px solid rgba(255,255,255,0.15); border-radius:6px; display:block; }
+    canvas#nextCanvas, canvas#holdCanvas { border-radius:6px; background:rgba(0,0,0,0.3); }
+    .stat-val { font-size:18px; font-weight:bold; color:#4ecca3; }
+    #controls-hint { font-size:11px; color:#666; margin-top:8px; text-align:center; }
+    #controls-hint span { display:block; }
+    #game-over-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; }
+    #game-over-overlay.hidden { display:none; }
+    .restart-btn { background:#4ecca3; color:#000; border:none; padding:10px 30px; border-radius:25px; font-size:16px; font-weight:bold; cursor:pointer; }
+  </style>
 </head>
 <body>
-  <div id="game-wrapper">
-    <div id="sidebar">
-      <h1>TETRIS</h1>
-      <div id="score-box">
-        <p>SCORE</p>
-        <span id="score">0</span>
+  <h2 style="margin-bottom:10px">🧱 Tetris</h2>
+  <div id="game-layout">
+    <div class="side-panel">
+      <div class="panel-box">
+        <h4>Hold (C)</h4>
+        <canvas id="holdCanvas" width="96" height="72"></canvas>
       </div>
-      <div id="level-box">
-        <p>LEVEL</p>
-        <span id="level">1</span>
-      </div>
-      <div id="lines-box">
-        <p>LINES</p>
-        <span id="lines">0</span>
-      </div>
-      <div id="next-box">
-        <p>NEXT</p>
-        <canvas id="next-canvas" width="120" height="120"></canvas>
-      </div>
-      <button id="start-btn">START</button>
+      <div class="panel-box"><h4>Score</h4><div class="stat-val" id="score">0</div></div>
+      <div class="panel-box"><h4>Best</h4><div class="stat-val" id="high-score">0</div></div>
+      <div class="panel-box"><h4>Level</h4><div class="stat-val" id="level">1</div></div>
+      <div class="panel-box"><h4>Lines</h4><div class="stat-val" id="lines">0</div></div>
     </div>
-    <canvas id="game-canvas" width="300" height="600"></canvas>
+    <canvas id="gameCanvas" width="240" height="480"></canvas>
+    <div class="side-panel">
+      <div class="panel-box">
+        <h4>Next</h4>
+        <canvas id="nextCanvas" width="96" height="120"></canvas>
+      </div>
+      <div class="panel-box">
+        <button class="restart-btn" id="startBtn" style="font-size:13px;padding:8px 16px">Start</button>
+        <button class="restart-btn" id="pauseBtn" style="font-size:13px;padding:8px 16px;margin-top:6px;background:#555;color:#fff" disabled>Pause</button>
+      </div>
+      <div id="controls-hint">
+        <span>←→ Move</span>
+        <span>↑ Rotate</span>
+        <span>↓ Soft Drop</span>
+        <span>Space Hard Drop</span>
+        <span>C Hold</span>
+      </div>
+    </div>
+  </div>
+  <div id="game-over-overlay" class="hidden">
+    <h2>Game Over!</h2>
+    <p>Score: <b id="final-score">0</b> | Lines: <b id="final-lines">0</b></p>
+    <button class="restart-btn" id="playAgainBtn">Play Again</button>
   </div>
   <script src="src/constants.js"></script>
   <script src="src/tetromino.js"></script>
   <script src="src/board.js"></script>
+  <script src="src/ghost.js"></script>
+  <script src="src/hold.js"></script>
   <script src="src/renderer.js"></script>
-  <script src="src/game.js"></script>
   <script src="src/input.js"></script>
   <script src="src/main.js"></script>
 </body>
